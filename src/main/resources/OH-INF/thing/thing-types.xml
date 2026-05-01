@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="smartthingscloud"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0
+                            https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<!-- ═══════════════════════════════════════════════════════════════════════
+		Bridge: SmartThings Cloud Account (OAuth2 PKCE)
+		═══════════════════════════════════════════════════════════════════════ -->
+	<bridge-type id="account">
+		<label>SmartThings Cloud Account</label>
+		<description>Connection to the SmartThings Cloud API via OAuth2 PKCE.
+			Authorize at
+			http(s)://[YOUR_OPENHAB]/smartthingscloud after adding this bridge.</description>
+
+		<channels>
+			<channel id="authStatus" typeId="auth-status"/>
+		</channels>
+
+		<config-description>
+			<parameter name="clientId" type="text" required="false">
+				<label>Client ID</label>
+				<description>SmartThings OAuth2 client ID. Defaults to the open-source SmartThings CLI client ID
+					(d18cf96e-c626-4433-bf51-ddbb10c5d1ed) — works for personal use without developer registration.</description>
+				<default>d18cf96e-c626-4433-bf51-ddbb10c5d1ed</default>
+			</parameter>
+			<parameter name="redirectUri" type="text" required="false">
+				<label>OAuth2 Redirect URI</label>
+				<description>Redirect URI sent to SmartThings during authorization. The default SmartThings client_id only allows
+					localhost. Default: http://localhost:8080/smartthingscloud</description>
+				<default>https://openhab5.agesen.dk/smartthingscloud</default>
+			</parameter>
+			<parameter name="clientSecret" type="text" required="false">
+				<label>Client Secret</label>
+				<description>OAuth2 client secret for your registered SmartThings app. Not needed for personal use with the default
+					client ID.</description>
+				<context>password</context>
+			</parameter>
+			<parameter name="accessToken" type="text" required="false">
+				<label>Access Token</label>
+				<description>Leave empty — tokens are managed automatically after OAuth2 authorization and stored internally. They
+					will not appear here even when authorized.</description>
+				<context>password</context>
+			</parameter>
+			<parameter name="refreshToken" type="text" required="false">
+				<label>Refresh Token</label>
+				<description>Leave empty — tokens are managed automatically after OAuth2 authorization and stored internally. They
+					will not appear here even when authorized.</description>
+				<context>password</context>
+			</parameter>
+		</config-description>
+	</bridge-type>
+
+	<!-- ═══════════════════════════════════════════════════════════════════════
+		Thing: Washer
+		═══════════════════════════════════════════════════════════════════════ -->
+	<thing-type id="washer">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="account"/>
+		</supported-bridge-type-refs>
+
+		<label>SmartThings Washing Machine</label>
+		<description>A Samsung washing machine connected via SmartThings Cloud.
+			Provides real-time state, program info, energy
+			monitoring and remote control.</description>
+
+		<channels>
+			<!-- Operating state -->
+			<channel id="machineState" typeId="machine-state"/>
+			<channel id="jobState" typeId="job-state"/>
+			<channel id="completionTime" typeId="completion-time"/>
+			<channel id="running" typeId="running"/>
+			<channel id="remaining" typeId="remaining"/>
+
+			<!-- Power and remote -->
+			<channel id="power" typeId="power"/>
+			<channel id="remoteEnabled" typeId="remote-enabled"/>
+
+			<!-- Program settings -->
+			<channel id="mode" typeId="mode"/>
+			<!-- Energy monitoring -->
+			<channel id="watt" typeId="watt"/>
+			<channel id="kwh" typeId="kwh"/>
+			<channel id="rinseMode" typeId="rinse-mode"/>
+			<channel id="spinSpeed" typeId="spin-speed"/>
+			<channel id="temperature" typeId="temperature"/>
+			<channel id="bubbleSoak" typeId="bubble-soak"/>
+			<channel id="volume" typeId="volume"/>
+			<channel id="extraCare" typeId="extra-care"/>
+			<channel id="extraCareLocation" typeId="extra-care-location"/>
+			<!-- Extended monitoring -->
+			<channel id="waterLiters" typeId="water-liters"/>
+			<channel id="kidsLock" typeId="kids-lock"/>
+			<channel id="currentCycle" typeId="current-cycle"/>
+			<channel id="operatingState" typeId="operating-state"/>
+			<channel id="progress" typeId="progress"/>					<channel id="detergentRemaining" typeId="detergent-remaining"/>
+					<channel id="softenerRemaining" typeId="softener-remaining"/>
+					<channel id="delayEnd" typeId="delay-end"/>
+					<channel id="supportedCourses" typeId="supported-courses"/>
+				<channel id="remainingTimeStr" typeId="remaining-time-str"/>
+				<channel id="operationTime" typeId="operation-time"/>
+				<channel id="updateAvailable" typeId="update-available"/>
+		</channels>
+
+		<config-description>
+			<parameter name="deviceId" type="text" required="true">
+				<label>Device ID</label>
+				<description>SmartThings device UUID. Find it via GET https://api.smartthings.com/v1/devices
+					using your access
+					token,
+					or from the SmartThings app device details.</description>
+			</parameter>
+			<parameter name="pollingIntervalSeconds" type="integer" required="false" min="10" max="300">
+				<label>Polling Interval (seconds)</label>
+				<description>How often to poll SmartThings API for washer status.</description>
+				<default>30</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<!-- ═══════════════════════════════════════════════════════════════════════
+		Channel Types
+		═══════════════════════════════════════════════════════════════════════ -->
+
+	<channel-type id="machine-state">
+		<item-type>String</item-type>
+		<label>Machine State</label>
+		<description>Overall machine state: run, pause, stop</description>
+		<state readOnly="false">
+			<options>
+				<option value="run">Running</option>
+				<option value="pause">Paused</option>
+				<option value="stop">Stopped</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="job-state">
+		<item-type>String</item-type>
+		<label>Job State</label>
+		<description>Current wash cycle phase: washing, rinsing, spin, finish, none, airWash, cooling, preWash, wrinklePrevent</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="completion-time">
+		<item-type>DateTime</item-type>
+		<label>Completion Time</label>
+		<description>Expected finish time for the current wash cycle</description>
+		<state readOnly="true" pattern="%1$tH:%1$tM"/>
+	</channel-type>
+
+	<channel-type id="running">
+		<item-type>Switch</item-type>
+		<label>Running</label>
+		<description>ON when washer is actively running (jobState is not none/finish/stopped)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="remaining">
+		<item-type>Number</item-type>
+		<label>Remaining</label>
+		<description>Minutes remaining until the current cycle completes</description>
+		<state readOnly="true" pattern="%.0f min"/>
+	</channel-type>
+
+	<channel-type id="power">
+		<item-type>Switch</item-type>
+		<label>Power</label>
+		<description>Turn the washing machine on or off</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="remote-enabled">
+		<item-type>Switch</item-type>
+		<label>Remote Control Enabled</label>
+		<description>ON when the washer allows remote control from SmartThings</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="mode">
+		<item-type>String</item-type>
+		<label>Wash Program</label>
+		<description>Active wash course/program (normal, heavy, delicates, permanentPress, etc.). Send the Samsung courseCode
+			(e.g. 1B, 7F) to change program.</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="rinse-mode">
+		<item-type>String</item-type>
+		<label>Rinse Mode</label>
+		<description>Rinse cycles setting (none, normal, extra, max)</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="spin-speed">
+		<item-type>String</item-type>
+		<label>Spin Speed</label>
+		<description>Centrifuge speed in RPM as string (e.g. 800, 1200, 1400). Send to change spin speed.</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="temperature">
+		<item-type>String</item-type>
+		<label>Water Temperature</label>
+		<description>Wash temperature in °C as string (e.g. 30, 40, 60, cold). Send to change temperature.</description>
+		<state readOnly="false" pattern="%s°C"/>
+	</channel-type>
+
+	<channel-type id="bubble-soak">
+		<item-type>Switch</item-type>
+		<label>Bubble Soak</label>
+		<description>Enable or disable bubble soak pre-wash</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="volume">
+		<item-type>Number</item-type>
+		<label>Buzzer Volume</label>
+		<description>Buzzer volume level (0=mute, 1=low, 2=medium, 3=high)</description>
+		<state readOnly="false" pattern="%.0f" min="0" max="3"/>
+	</channel-type>
+
+	<channel-type id="extra-care">
+		<item-type>String</item-type>
+		<label>Extra Care Mode</label>
+		<description>Clothing extra care operation mode (e.g. on, off, rotating)</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="extra-care-location">
+		<item-type>String</item-type>
+		<label>Extra Care Location</label>
+		<description>Extra care user location (indoor, outdoor)</description>
+		<state readOnly="false"/>
+	</channel-type>
+
+	<channel-type id="watt">
+		<item-type>Number:Power</item-type>
+		<label>Power Consumption</label>
+		<description>Current power draw of the washing machine</description>
+		<state readOnly="true" pattern="%.0f W"/>
+	</channel-type>
+
+	<channel-type id="kwh">
+		<item-type>Number:Energy</item-type>
+		<label>Energy Usage</label>
+		<description>Accumulated energy consumption in kWh</description>
+		<state readOnly="true" pattern="%.2f kWh"/>
+	</channel-type>
+
+	<channel-type id="water-liters">
+		<item-type>Number</item-type>
+		<label>Water Consumption</label>
+		<description>Cumulative water used in this session (liters)</description>
+		<state readOnly="true" pattern="%.1f L"/>
+	</channel-type>
+
+	<channel-type id="kids-lock">
+		<item-type>Switch</item-type>
+		<label>Child Lock</label>
+		<description>ON when child lock is active (panel locked)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="current-cycle">
+		<item-type>String</item-type>
+		<label>Active Program Code</label>
+		<description>Currently selected wash program code (e.g. B0, 1B, 65)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="operating-state">
+		<item-type>String</item-type>
+		<label>Operating State</label>
+		<description>Samsung operating state: ready, running, paused</description>
+		<state readOnly="true">
+			<options>
+				<option value="ready">Ready</option>
+				<option value="running">Running</option>
+				<option value="paused">Paused</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="progress">
+		<item-type>Number</item-type>
+		<label>Progress</label>
+		<description>Wash cycle progress in percent</description>
+		<state readOnly="true" pattern="%.0f %%" min="0" max="100"/>
+	</channel-type>
+
+	<channel-type id="detergent-remaining">
+		<item-type>Number</item-type>
+		<label>Detergent Remaining</label>
+		<description>Remaining detergent amount</description>
+		<state readOnly="true" pattern="%.0f"/>
+	</channel-type>
+
+	<channel-type id="softener-remaining">
+		<item-type>Number</item-type>
+		<label>Softener Remaining</label>
+		<description>Remaining fabric softener amount</description>
+		<state readOnly="true" pattern="%.0f"/>
+	</channel-type>
+
+	<channel-type id="delay-end">
+		<item-type>Number</item-type>
+		<label>Delay End (min)</label>
+		<description>Remaining time until delayed start begins (minutes)</description>
+		<state readOnly="true" pattern="%.0f min"/>
+	</channel-type>
+
+	<channel-type id="supported-courses">
+		<item-type>String</item-type>
+		<label>Supported Courses</label>
+		<description>Comma-separated list of available wash program codes</description>
+		<state readOnly="true"/>
+	</channel-type>
+	<channel-type id="remaining-time-str">
+		<item-type>String</item-type>
+		<label>Remaining Time</label>
+		<description>Remaining cycle time formatted as HH:MM (e.g. "00:15")</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="operation-time">
+		<item-type>Number:Time</item-type>
+		<label>Total Cycle Time</label>
+		<description>Total duration of the selected wash cycle (minutes)</description>
+		<state readOnly="true" pattern="%.0f min"/>
+	</channel-type>
+
+	<channel-type id="update-available">
+		<item-type>Switch</item-type>
+		<label>Firmware Update Available</label>
+		<description>ON when a new firmware version is available for the appliance</description>
+		<state readOnly="true"/>
+	</channel-type>
+	<!-- ═══════════════════════════════════════════════════════════════════
+		Television thing type
+		═══════════════════════════════════════════════════════════════════ -->
+
+	<thing-type id="television">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="account"/>
+		</supported-bridge-type-refs>
+		<label>SmartThings Television</label>
+		<description>A Samsung Smart TV connected via SmartThings Cloud.</description>
+		<channels>
+			<channel id="power" typeId="power"/>
+			<channel id="tvVolume" typeId="tvVolume"/>
+			<channel id="tvMute" typeId="tvMute"/>
+			<channel id="inputSource" typeId="inputSource"/>
+			<channel id="supportedInputSources" typeId="supportedInputSources"/>
+			<channel id="tvChannel" typeId="tvChannel"/>
+			<channel id="tvChannelName" typeId="tvChannelName"/>
+			<channel id="channelUp" typeId="channelUp"/>
+			<channel id="channelDown" typeId="channelDown"/>
+			<channel id="pictureMode" typeId="pictureMode"/>
+			<channel id="supportedPictureModes" typeId="supportedPictureModes"/>
+			<channel id="soundMode" typeId="soundMode"/>
+			<channel id="supportedSoundModes" typeId="supportedSoundModes"/>
+			<channel id="playbackStatus" typeId="playbackStatus"/>
+			<channel id="watt" typeId="watt"/>
+			<channel id="kwh" typeId="kwh"/>
+			<channel id="firmwareVersion" typeId="firmwareVersion"/>
+			<channel id="onlineStatus" typeId="onlineStatus"/>
+		</channels>
+		<config-description>
+			<parameter name="deviceId" type="text" required="true">
+				<label>Device ID</label>
+				<description>SmartThings device UUID. Find it via GET https://api.smartthings.com/v1/devices.</description>
+			</parameter>
+			<parameter name="pollingIntervalSeconds" type="integer" min="5" max="3600">
+				<label>Polling Interval (s)</label>
+				<description>How often to poll the SmartThings API for status updates.</description>
+				<default>30</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<!-- Television channel types -->
+
+	<channel-type id="tvVolume">
+		<item-type>Number</item-type>
+		<label>Volume</label>
+		<description>TV audio volume level (0–100)</description>
+		<state pattern="%.0f" min="0" max="100"/>
+	</channel-type>
+
+	<channel-type id="tvMute">
+		<item-type>Switch</item-type>
+		<label>Mute</label>
+		<description>TV audio mute state — ON = muted</description>
+	</channel-type>
+
+	<channel-type id="inputSource">
+		<item-type>String</item-type>
+		<label>Input Source</label>
+		<description>Active input source (e.g. digitalTv, HDMI1, HDMI2)</description>
+	</channel-type>
+
+	<channel-type id="supportedInputSources">
+		<item-type>String</item-type>
+		<label>Supported Input Sources</label>
+		<description>Available input sources as id=name pairs (e.g. dtv=TV, HDMI2=Nvidia Shield)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="tvChannel">
+		<item-type>String</item-type>
+		<label>TV Channel</label>
+		<description>Current TV channel number — send a channel number string to change channel</description>
+	</channel-type>
+
+	<channel-type id="channelUp">
+		<item-type>Switch</item-type>
+		<label>Channel Up</label>
+		<description>Send ON to go to the next TV channel</description>
+	</channel-type>
+
+	<channel-type id="channelDown">
+		<item-type>Switch</item-type>
+		<label>Channel Down</label>
+		<description>Send ON to go to the previous TV channel</description>
+	</channel-type>
+
+	<channel-type id="tvChannelName">
+		<item-type>String</item-type>
+		<label>TV Channel Name</label>
+		<description>Current TV channel name</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="pictureMode">
+		<item-type>String</item-type>
+		<label>Picture Mode</label>
+		<description>TV picture mode (e.g. Standard, Movie, Dynamic)</description>
+	</channel-type>
+
+	<channel-type id="supportedPictureModes">
+		<item-type>String</item-type>
+		<label>Supported Picture Modes</label>
+		<description>Comma-separated list of available picture modes</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="soundMode">
+		<item-type>String</item-type>
+		<label>Sound Mode</label>
+		<description>TV sound mode (e.g. Standard, Music, Movie)</description>
+	</channel-type>
+
+	<channel-type id="supportedSoundModes">
+		<item-type>String</item-type>
+		<label>Supported Sound Modes</label>
+		<description>Comma-separated list of available sound modes</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="playbackStatus">
+		<item-type>String</item-type>
+		<label>Playback Status</label>
+		<description>Media playback status (playing, paused, stopped, etc.)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="firmwareVersion">
+		<item-type>String</item-type>
+		<label>Firmware Version</label>
+		<description>TV firmware version string</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="onlineStatus">
+		<item-type>String</item-type>
+		<label>Online Status</label>
+		<description>SmartThings device online status (online/offline)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+		Presence thing type
+		═══════════════════════════════════════════════════════════════════ -->
+
+	<thing-type id="presence">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="account"/>
+		</supported-bridge-type-refs>
+		<label>SmartThings Presence Sensor</label>
+		<description>A SmartThings presence sensor or mobile phone showing home/away state.</description>
+		<channels>
+			<channel id="presence" typeId="presence"/>
+		</channels>
+		<config-description>
+			<parameter name="deviceId" type="text" required="true">
+				<label>Device ID</label>
+				<description>SmartThings device UUID. Find it via GET https://api.smartthings.com/v1/devices.</description>
+			</parameter>
+			<parameter name="pollingIntervalSeconds" type="integer" min="5" max="3600">
+				<label>Polling Interval (s)</label>
+				<description>How often to poll the SmartThings API for status updates.</description>
+				<default>30</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<channel-type id="auth-status">
+		<item-type>String</item-type>
+		<label>Authorization Status</label>
+		<description>Shows whether the SmartThings account is authorized. Authorize at
+			http(s)://[YOUR_OPENHAB]/smartthingscloud</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="presence">
+		<item-type>Switch</item-type>
+		<label>Presence</label>
+		<description>ON = present (home), OFF = not present (away)</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<!-- ═══════════════════════════════════════════════════════════════════
+		Light Sensor thing type
+		═══════════════════════════════════════════════════════════════════ -->
+
+	<thing-type id="lightSensor">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="account"/>
+		</supported-bridge-type-refs>
+		<label>SmartThings Light Sensor</label>
+		<description>A SmartThings illuminance/light sensor reporting lux and brightness level.</description>
+		<channels>
+			<channel id="illuminance" typeId="illuminance"/>
+			<channel id="brightnessLevel" typeId="brightnessLevel"/>
+		</channels>
+		<config-description>
+			<parameter name="deviceId" type="text" required="true">
+				<label>Device ID</label>
+				<description>SmartThings device UUID. Find it via GET https://api.smartthings.com/v1/devices.</description>
+			</parameter>
+			<parameter name="pollingIntervalSeconds" type="integer" min="5" max="3600">
+				<label>Polling Interval (s)</label>
+				<description>How often to poll the SmartThings API for status updates.</description>
+				<default>30</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<channel-type id="illuminance">
+		<item-type>Number:Illuminance</item-type>
+		<label>Illuminance</label>
+		<description>Measured illuminance in lux</description>
+		<state readOnly="true" pattern="%.0f lx"/>
+	</channel-type>
+
+	<channel-type id="brightnessLevel">
+		<item-type>Number</item-type>
+		<label>Brightness Level</label>
+		<description>Relative brightness intensity level (1–5)</description>
+		<state readOnly="true" pattern="%.0f" min="1" max="5"/>
+	</channel-type>
+
+</thing:thing-descriptions>

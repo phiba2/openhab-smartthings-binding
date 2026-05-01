@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon:addon id="binding-smartthingscloud" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:addon="https://openhab.org/schemas/addon/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/addon/v1.0.0 https://openhab.org/schemas/addon-1.0.0.xsd">
+
+	<type>binding</type>
+	<name>SmartThings Cloud Binding</name>
+	<description>Binding for Samsung SmartThings cloud-connected appliances (washers, dryers, etc.)
+		using OAuth2 PKCE
+		authentication. Provides polling-based state updates and remote control
+		via the SmartThings Cloud REST API.</description>
+
+</addon:addon>
