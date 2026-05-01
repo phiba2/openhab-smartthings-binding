@@ -4,7 +4,7 @@
 | type | binding |
 | author | Nanna Agesen |
 | version range | \[5.0.0;6.0.0) |
-| download | [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-binding-smartthingscloud/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar) |
+| download | [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar) |
 
 # Samsung SmartThings Cloud Binding
 
@@ -229,10 +229,10 @@ Still planned:
 
 ## Resources
 
-* **Download JAR:** [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-binding-smartthingscloud/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar)
-* **Source Code:** [github.com/Prinsessen/openhab-binding-smartthingscloud](https://github.com/Prinsessen/openhab-binding-smartthingscloud)
-* **Full Documentation:** [README.md](https://github.com/Prinsessen/openhab-binding-smartthingscloud/blob/main/README.md)
-* **Release:** [v1.4.0 — TV kwh + full channel coverage + washer remainingTimeStr/operationTime/updateAvailable](https://github.com/Prinsessen/openhab-binding-smartthingscloud/releases/tag/v1.4.0)
+* **Download JAR:** [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar)
+* **Source Code:** [github.com/Prinsessen/openhab-smartthings-binding](https://github.com/Prinsessen/openhab-smartthings-binding)
+* **Full Documentation:** [README.md](https://github.com/Prinsessen/openhab-smartthings-binding/blob/main/README.md)
+* **Release:** [v1.4.0 — TV kwh + full channel coverage + washer remainingTimeStr/operationTime/updateAvailable](https://github.com/Prinsessen/openhab-smartthings-binding/releases/tag/v1.4.0)
 * **License:** EPL-2.0
 
 ---
