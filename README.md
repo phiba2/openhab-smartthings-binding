@@ -133,6 +133,27 @@ curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 
 ---
 
+## Finding Your Scene ID
+
+```bash
+smartthings scenes
+```
+
+Lists all scenes with name and `sceneId`:
+
+```
+ #  Scene Name  Scene Id
+ 1  Filmscene   bc3ce002-66f7-47c7-adef-5a49f285f95c
+```
+
+To also find the `locationId` (needed if your account has multiple locations):
+
+```bash
+smartthings locations
+```
+
+---
+
 ## Thing Configuration
 
 ### `.things` file
@@ -214,7 +235,7 @@ Add a new thing of type **SmartThings Cloud Account** (bridge), then add child t
 
 | Parameter    | Type | Required | Default  | Description |
 |--------------|------|----------|----------|-------------|
-| `sceneId`    | text | **Yes**  | —        | SmartThings scene UUID. Find it via the SmartThings CLI: `smartthings scenes` |
+| `sceneId`    | text | **Yes**  | —        | SmartThings scene UUID. See [Finding Your Scene ID](#finding-your-scene-id). |
 | `locationId` | text | No       | *(empty)*| SmartThings location UUID. Required only if your account has multiple locations. |
 
 ---
