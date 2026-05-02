@@ -94,13 +94,14 @@
 			<channel id="kidsLock" typeId="kids-lock"/>
 			<channel id="currentCycle" typeId="current-cycle"/>
 			<channel id="operatingState" typeId="operating-state"/>
-			<channel id="progress" typeId="progress"/>					<channel id="detergentRemaining" typeId="detergent-remaining"/>
-					<channel id="softenerRemaining" typeId="softener-remaining"/>
-					<channel id="delayEnd" typeId="delay-end"/>
-					<channel id="supportedCourses" typeId="supported-courses"/>
-				<channel id="remainingTimeStr" typeId="remaining-time-str"/>
-				<channel id="operationTime" typeId="operation-time"/>
-				<channel id="updateAvailable" typeId="update-available"/>
+			<channel id="progress" typeId="progress"/>
+			<channel id="detergentRemaining" typeId="detergent-remaining"/>
+			<channel id="softenerRemaining" typeId="softener-remaining"/>
+			<channel id="delayEnd" typeId="delay-end"/>
+			<channel id="supportedCourses" typeId="supported-courses"/>
+			<channel id="remainingTimeStr" typeId="remaining-time-str"/>
+			<channel id="operationTime" typeId="operation-time"/>
+			<channel id="updateAvailable" typeId="update-available"/>
 		</channels>
 
 		<config-description>
@@ -562,4 +563,35 @@
 		<state readOnly="true" pattern="%.0f" min="1" max="5"/>
 	</channel-type>
 
+	<!-- ═══════════════════════════════════════════════════════════════════ -->
+	<!-- Scene -->
+	<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+	<thing-type id="scene">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="account"/>
+		</supported-bridge-type-refs>
+		<label>SmartThings Scene</label>
+		<description>Executes a SmartThings scene. Send ON to the trigger channel to run the scene.</description>
+		<channels>
+			<channel id="trigger" typeId="sceneTrigger"/>
+		</channels>
+		<config-description>
+			<parameter name="sceneId" type="text" required="true">
+				<label>Scene ID</label>
+				<description>SmartThings scene UUID. Find it via the SmartThings CLI: smartthings scenes</description>
+			</parameter>
+			<parameter name="locationId" type="text">
+				<label>Location ID (optional)</label>
+				<description>SmartThings location UUID. Required only when the account has multiple locations.</description>
+				<default></default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<channel-type id="sceneTrigger">
+		<item-type>Switch</item-type>
+		<label>Trigger</label>
+		<description>Send ON to execute the scene. Automatically resets to OFF after triggering.</description>
+	</channel-type>
 </thing:thing-descriptions>

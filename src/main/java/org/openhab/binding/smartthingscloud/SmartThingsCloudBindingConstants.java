@@ -33,9 +33,10 @@ public class SmartThingsCloudBindingConstants {
     public static final ThingTypeUID THING_TYPE_TELEVISION = new ThingTypeUID(BINDING_ID, "television");
     public static final ThingTypeUID THING_TYPE_PRESENCE = new ThingTypeUID(BINDING_ID, "presence");
     public static final ThingTypeUID THING_TYPE_LIGHT_SENSOR = new ThingTypeUID(BINDING_ID, "lightSensor");
+    public static final ThingTypeUID THING_TYPE_SCENE = new ThingTypeUID(BINDING_ID, "scene");
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Set.of(THING_TYPE_ACCOUNT, THING_TYPE_WASHER,
-            THING_TYPE_TELEVISION, THING_TYPE_PRESENCE, THING_TYPE_LIGHT_SENSOR);
+            THING_TYPE_TELEVISION, THING_TYPE_PRESENCE, THING_TYPE_LIGHT_SENSOR, THING_TYPE_SCENE);
 
     // ── SmartThings API ───────────────────────────────────────────────────────
     /** Default public client_id from the open-source SmartThings CLI. */
@@ -101,6 +102,10 @@ public class SmartThingsCloudBindingConstants {
     // ── Light Sensor Channels ─────────────────────────────────────────────────
     public static final String CHANNEL_ILLUMINANCE = "illuminance";
     public static final String CHANNEL_BRIGHTNESS_LEVEL = "brightnessLevel";
+
+    // ── Scene Channels ────────────────────────────────────────────────────────
+    /** Switch channel — send ON to execute the scene; auto-resets to OFF. */
+    public static final String CHANNEL_SCENE_TRIGGER = "trigger";
 
     // ── Storage keys ─────────────────────────────────────────────────────────
     public static final String STORAGE_ACCESS_TOKEN = "accessToken";

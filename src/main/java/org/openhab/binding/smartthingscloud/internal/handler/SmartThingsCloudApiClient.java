@@ -176,6 +176,40 @@ public class SmartThingsCloudApiClient {
         }
     }
 
+    /**
+     * Executes a SmartThings scene.
+     *
+     * @param sceneId the scene UUID
+     * @param locationId the location UUID (may be empty — omitted from URL if blank)
+     * @return {@code true} on HTTP 2xx
+     */
+    public boolean executeScene(String sceneId, String locationId) {
+        if (!ensureValidToken()) {
+            logger.warn("Cannot execute scene — token refresh failed");
+            return false;
+        }
+        String url = ST_API_BASE + "/scenes/" + sceneId + "/execute";
+        if (!locationId.isBlank()) {
+            url = url + "?locationId=" + locationId;
+        }
+        try {
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofSeconds(20))
+                    .header("Authorization", "Bearer " + accessToken).POST(HttpRequest.BodyPublishers.noBody()).build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+                return true;
+            }
+            logger.warn("Execute scene {} returned HTTP {}: {}", sceneId, resp.statusCode(), resp.body());
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        } catch (IOException e) {
+            logger.warn("IO error executing scene {}: {}", sceneId, e.getMessage());
+            return false;
+        }
+    }
+
     public void dispose() {
         // HttpClient has no explicit close in Java 11 — nothing to do
     }
