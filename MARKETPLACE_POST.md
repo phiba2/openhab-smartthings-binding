@@ -4,7 +4,7 @@
 | type | binding |
 | author | Nanna Agesen |
 | version range | \[5.0.0;6.0.0) |
-| download | [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar) |
+| download | [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.5.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar) |
 
 # Samsung SmartThings Cloud Binding
 
@@ -25,6 +25,7 @@ Authorization uses **OAuth2 PKCE** (the same flow as the official SmartThings CL
 | `television` | Samsung Smart TV |
 | `presence` | SmartThings phone / presence sensor |
 | `lightSensor` | SmartThings illuminance sensor |
+| `scene` | SmartThings scene — trigger a scene with a Switch |
 ---
 
 ## Channels
@@ -134,7 +135,22 @@ Authorization uses **OAuth2 PKCE** (the same flow as the official SmartThings CL
 | `brightnessLevel` | Dimmer | Brightness 0–100 % (maps lux to %) |
 
 ---
+### Scene — Control (write-only)
 
+| Channel | Type | Description |
+|----|----|----||
+| `trigger` | Switch | Send `ON` to execute the scene — auto-resets to `OFF` |
+
+**Configuration parameters:**
+
+| Parameter | Required | Description |
+|----|----|----|
+| `sceneId` | ✅ | SmartThings scene ID (UUID) |
+| `locationId` | ❌ | Location ID — only needed for multi-location accounts |
+
+Find your scene ID with the SmartThings CLI: `smartthings scenes`
+
+---
 ## Quick Start
 
 ### smartthings.things
@@ -216,6 +232,7 @@ This is a **beta release**. The following thing types are currently implemented:
 - ✅ `television` — Samsung Smart TV (12 channels — power, volume, mute, input, channel, picture/sound mode, app ID, channel up/down, supported inputs/modes)
 - ✅ `presence` — SmartThings phone / arrival sensor
 - ✅ `lightSensor` — illuminance (lux) + brightness level
+- ✅ `scene` — execute any SmartThings scene via a Switch channel
 
 Still planned:
 - Dryer
@@ -229,10 +246,10 @@ Still planned:
 
 ## Resources
 
-* **Download JAR:** [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.4.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar)
+* **Download JAR:** [org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar](https://github.com/Prinsessen/openhab-smartthings-binding/releases/download/v1.5.0/org.openhab.binding.smartthingscloud-5.2.0-SNAPSHOT.jar)
 * **Source Code:** [github.com/Prinsessen/openhab-smartthings-binding](https://github.com/Prinsessen/openhab-smartthings-binding)
 * **Full Documentation:** [README.md](https://github.com/Prinsessen/openhab-smartthings-binding/blob/main/README.md)
-* **Release:** [v1.4.0 — TV kwh + full channel coverage + washer remainingTimeStr/operationTime/updateAvailable](https://github.com/Prinsessen/openhab-smartthings-binding/releases/tag/v1.4.0)
+* **Release:** [v1.5.0 — Scene Support](https://github.com/Prinsessen/openhab-smartthings-binding/releases/tag/v1.5.0)
 * **License:** EPL-2.0
 
 ---
