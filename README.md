@@ -418,7 +418,18 @@ It is the easiest way to look up device IDs and inspect capability state without
 
 ### Installation
 
-**Requirements:** Node.js 18+ (comes with npm)
+**Requirements:** Node.js 18+ and npm.
+
+> **openHAB on Debian/Ubuntu/Raspberry Pi OS:**
+> The default `apt install nodejs` package is usually too old (v12/v16).
+> Install a current version via the [NodeSource](https://github.com/nodesource/distributions) repository:
+> ```bash
+> curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+> sudo apt-get install -y nodejs
+> node --version   # should print v20.x.x
+> ```
+
+Once Node.js 18+ is available, install the CLI globally:
 
 ```bash
 npm install -g @smartthings/cli
