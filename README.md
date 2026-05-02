@@ -411,6 +411,51 @@ end
 
 ---
 
+## SmartThings CLI
+
+The [SmartThings CLI](https://github.com/SmartThingsCommunity/smartthings-cli) is an official Samsung command-line tool that uses the same OAuth2 PKCE flow as this binding.
+It is the easiest way to look up device IDs and inspect capability state without writing any code.
+
+### Installation
+
+**Requirements:** Node.js 18+ (comes with npm)
+
+```bash
+npm install -g @smartthings/cli
+```
+
+Verify:
+
+```bash
+smartthings --version
+# e.g. 2.1.2
+```
+
+### First-time login
+
+The CLI authenticates on first use. Run any command (e.g. `smartthings devices`) and it will:
+
+1. Print a URL — open it in your browser
+2. Log in with your Samsung account and authorize
+3. Be redirected to `http://localhost:61973/finish` — the CLI briefly opens this port to catch the callback
+
+> **Headless / remote servers (e.g. openHAB on a Raspberry Pi):**
+> The callback lands on `localhost:61973` on the **server**, not your desktop browser.
+> Use SSH port forwarding so Chrome/Firefox on your laptop can complete the flow:
+> ```bash
+> ssh -L 61973:localhost:61973 user@your-openhab-host
+> ```
+> Then open the authorization URL in your local browser.
+>
+> **VS Code Remote SSH** handles this automatically — VS Code auto-forwards port 61973.
+
+### Credentials storage
+
+After successful login, tokens are stored in `~/.config/@smartthings/cli/credentials.json`.
+They are reused automatically on subsequent commands — no re-login needed.
+
+---
+
 ## Finding Your Device ID
 
 ### Option 1: SmartThings CLI (easiest)
@@ -419,7 +464,7 @@ end
 smartthings devices
 ```
 
-Lists all your devices with name and `deviceId` — no token needed.
+Lists all your devices with name and `deviceId` — no token needed (triggers login on first use, see above).
 
 ### Option 2: SmartThings REST API
 
