@@ -14,6 +14,7 @@ Any Samsung account holder can authorize using the built-in client ID without re
 | `television`  | Samsung Smart TV |
 | `presence`    | Samsung mobile phone / SmartThings presence sensor |
 | `lightSensor` | SmartThings illuminance / brightness sensor |
+| `scene`       | SmartThings scene — execute with a Switch channel |
 
 > Additional device types (dryer, dishwasher, air purifier, etc.) can be added by contributing channel mappings.
 
@@ -209,6 +210,15 @@ Add a new thing of type **SmartThings Cloud Account** (bridge), then add child t
 
 ---
 
+## Scene Configuration Parameters
+
+| Parameter    | Type | Required | Default  | Description |
+|--------------|------|----------|----------|-------------|
+| `sceneId`    | text | **Yes**  | —        | SmartThings scene UUID. Find it via the SmartThings CLI: `smartthings scenes` |
+| `locationId` | text | No       | *(empty)*| SmartThings location UUID. Required only if your account has multiple locations. |
+
+---
+
 ## Washer Channels
 
 ### State channels (read-only)
@@ -326,6 +336,16 @@ Add a new thing of type **SmartThings Cloud Account** (bridge), then add child t
 
 ---
 
+## Scene Channels
+
+| Channel ID | Type   | Description |
+|------------|--------|-------------|
+| `trigger`  | Switch | Send `ON` to execute the scene. Automatically resets to `OFF` after triggering. |
+
+> **Note:** Because the channel auto-resets, you can link it to a `Switch` item and fire the scene any number of times — each `ON` command is a fresh execution.
+
+---
+
 ## Full Example
 
 ### `smartthings.things`
@@ -415,6 +435,9 @@ Switch          Phone_Presence           "Home [%s]"                   (gPresenc
 Group           gLightSensor             "Bedroom Light Sensor"
 Number          LS_Illuminance           "Illuminance [%.0f lx]"       (gLightSensor) { channel="smartthingscloud:lightSensor:myaccount:mysensor:illuminance" }
 Number          LS_BrightnessLevel       "Brightness Level [%.0f]"     (gLightSensor) { channel="smartthingscloud:lightSensor:myaccount:mysensor:brightnessLevel" }
+
+// ── Scenes ──────────────────────────────────────────────────────────────────
+Switch          Scene_Filmscene          "Filmscene"                   { channel="smartthingscloud:scene:myaccount:filmscene:trigger" }
 ```
 
 ### `smartthings.sitemap`
@@ -453,6 +476,10 @@ sitemap smartthings label="SmartThings" {
     Frame label="Bedroom Light Sensor" {
         Text item=LS_Illuminance    label="Illuminance [%.0f lx]"
         Text item=LS_BrightnessLevel label="Brightness Level [%.0f]"
+    }
+
+    Frame label="Scenes" {
+        Switch item=Scene_Filmscene label="Filmscene"
     }
 
 }
