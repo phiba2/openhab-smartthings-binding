@@ -413,21 +413,28 @@ end
 
 ## Finding Your Device ID
 
-### Option 1: SmartThings REST API
+### Option 1: SmartThings CLI (easiest)
 
-After authorizing, your access token is stored in the openHAB JSON database.
-Query the SmartThings API:
+```bash
+smartthings devices
+```
+
+Lists all your devices with name and `deviceId` — no token needed.
+
+### Option 2: SmartThings REST API
+
+If you have an access token (e.g. from the SmartThings CLI via `smartthings tokens:create`):
 
 ```bash
 curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-     https://api.smartthings.com/v1/devices
+     https://api.smartthings.com/v1/devices | python3 -m json.tool | grep -E "name|deviceId"
 ```
 
-Find your washing machine by `name` or `label`. The `deviceId` field is the UUID.
+### Option 3: SmartThings App (older app versions only)
 
-### Option 2: SmartThings App
+> ⚠️ Samsung removed the device ID from newer app versions — this may not work.
 
-1. Open the SmartThings app → tap your washing machine.
+1. Open the SmartThings app → tap your device.
 2. Tap ⋮ (three-dot menu) → **Information**.
 3. The device ID is shown as a UUID at the bottom.
 
