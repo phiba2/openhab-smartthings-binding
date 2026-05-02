@@ -409,6 +409,44 @@ then
 end
 ```
 
+### `smartthings.js` (same examples in JS scripting / ECMAScript)
+
+> Requires the **JS Scripting** add-on (`org.openhab.automation.jsscripting`).
+> Place the file in `$OPENHAB_CONF/automation/js/`.
+
+```javascript
+const { rules, items, actions, time } = require("openhab");
+
+// Washer notification
+rules.when().item("Washer_JobState").changed().toValue("finish").then(() => {
+  actions.NotificationAction.sendNotification("your@email.com", "Washing machine done!");
+}).build("Washing machine finished");
+
+// Presence grace timer
+let awayTimer = null;
+
+rules.when().item("Phone_Presence").changed().toValue("OFF").then(() => {
+  if (awayTimer !== null) {
+    awayTimer.cancel();
+    awayTimer = null;
+  }
+  awayTimer = actions.ScriptExecution.createTimer(time.ZonedDateTime.now().plusMinutes(5), () => {
+    if (items.getItem("Phone_Presence").state === "OFF") {
+      console.log("Phone confirmed away after grace period");
+      // trigger away logic here
+    }
+    awayTimer = null;
+  });
+}).build("Phone left home");
+
+rules.when().item("Phone_Presence").changed().toValue("ON").then(() => {
+  if (awayTimer !== null) {
+    awayTimer.cancel();
+    awayTimer = null;
+  }
+}).build("Phone arrived home");
+```
+
 ---
 
 ## SmartThings CLI
