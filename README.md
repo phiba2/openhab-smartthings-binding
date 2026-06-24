@@ -143,7 +143,7 @@ Lists all scenes with name and `sceneId`:
 
 ```
  #  Scene Name  Scene Id
- 1  Filmscene   bc3ce002-66f7-47c7-adef-5a49f285f95c
+ 1  Movie Time  xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 To also find the `locationId` (needed if your account has multiple locations):
