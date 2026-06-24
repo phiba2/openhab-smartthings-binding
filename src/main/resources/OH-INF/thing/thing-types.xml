@@ -28,8 +28,7 @@
 			<parameter name="redirectUri" type="text" required="false">
 				<label>OAuth2 Redirect URI</label>
 				<description>Redirect URI sent to SmartThings during authorization. The default SmartThings client_id only allows
-					localhost. Default: http://localhost:8080/smartthingscloud</description>
-				<default>https://openhab5.agesen.dk/smartthingscloud</default>
+					localhost. Leave empty to use the default localhost callback.</description>
 			</parameter>
 			<parameter name="clientSecret" type="text" required="false">
 				<label>Client Secret</label>

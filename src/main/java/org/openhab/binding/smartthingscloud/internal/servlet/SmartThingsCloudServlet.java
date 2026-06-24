@@ -196,7 +196,7 @@ public class SmartThingsCloudServlet extends HttpServlet {
                     }
                     response.setContentType("application/json");
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().write("{\"targetUrl\":\"https://openhab5.agesen.dk" + SERVLET_PATH + "\"}");
+                    response.getWriter().write("{\"targetUrl\":\"" + SERVLET_PATH + "\"}");
                     return;
                 }
                 if ("EVENT".equals(lifecycle)) {
@@ -303,7 +303,7 @@ public class SmartThingsCloudServlet extends HttpServlet {
                 .append("</code>. Before clicking Authorize, open an SSH tunnel:</p>")
                 .append("<pre style='background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;overflow-x:auto'>")
                 .append("ssh -L ").append(CALLBACK_PORT).append(":localhost:").append(CALLBACK_PORT)
-                .append(" admin@openhab5.agesen.dk</pre>")
+                .append(" admin@your-openhab-host</pre>")
                 .append("<p>Keep this terminal open, then click Authorize. After Samsung login, your browser will open <code>localhost:")
                 .append(CALLBACK_PORT).append("</code> — this is normal and completes the auth.</p></div>");
 
@@ -431,7 +431,7 @@ public class SmartThingsCloudServlet extends HttpServlet {
                         writeHttpResponse(out, 200,
                                 "<h1 style='color:green'>&#10003; Authorization Successful</h1>"
                                         + "<p>SmartThings account authorized. You can close this tab.</p>"
-                                        + "<p><a href='https://openhab5.agesen.dk" + SERVLET_PATH
+                                        + "<p><a href='" + SERVLET_PATH
                                         + "'>Back to openHAB SmartThings</a></p>");
                     } else {
                         writeHttpResponse(out, 500, "<h1>Bridge Not Found</h1><p>state=" + esc(state) + "</p>");

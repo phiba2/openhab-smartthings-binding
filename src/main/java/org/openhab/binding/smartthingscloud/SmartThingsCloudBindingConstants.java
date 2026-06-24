@@ -41,7 +41,7 @@ public class SmartThingsCloudBindingConstants {
     // ── SmartThings API ───────────────────────────────────────────────────────
     /** Default public client_id from the open-source SmartThings CLI. */
     public static final String DEFAULT_CLIENT_ID = "b3c72013-eddd-4f65-a33b-0d90cf271e24";
-    public static final String DEFAULT_REDIRECT_URI = "https://openhab5.agesen.dk/smartthingscloud";
+    public static final String DEFAULT_REDIRECT_URI = "";
 
     public static final String ST_AUTH_URL = "https://oauthin-regional.api.smartthings.com/oauth/authorize";
     public static final String ST_TOKEN_URL = "https://auth-global.api.smartthings.com/oauth/token";

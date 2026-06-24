@@ -23,16 +23,16 @@ public class SmartThingsCloudAccountConfiguration {
     public String clientId = "b3c72013-eddd-4f65-a33b-0d90cf271e24";
 
     /**
-     * OAuth2 client secret for the registered app.
-     * Leave empty only if using the legacy PKCE flow (not recommended).
+     * OAuth2 client secret. Only needed if you registered your own SmartThings app.
+     * Leave empty for the default PKCE flow (recommended).
      */
-    public String clientSecret = "3de4cfa5-1447-49de-b8ee-3d1f02d9c28d";
+    public String clientSecret = "";
 
     /**
-     * OAuth2 redirect URI sent to SmartThings.
-     * Must match what is registered in the SmartThings developer portal.
+     * OAuth2 redirect URI sent to SmartThings. Leave empty to use the default
+     * localhost callback. Set only if you registered your own redirect URI.
      */
-    public String redirectUri = "https://openhab5.agesen.dk/smartthingscloud";
+    public String redirectUri = "";
 
     /**
      * Pre-configured access token. If set together with refreshToken, the binding
