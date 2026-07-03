@@ -15,7 +15,7 @@ Any Samsung account holder can authorize using the built-in client ID without re
 | `presence`       | Samsung mobile phone / SmartThings presence sensor |
 | `lightSensor`    | Samsung SmartThings illuminance / brightness sensor |
 | `scene`          | Samsung SmartThings scene — execute with a switch channel |
-| `airConditioner` | Samsung SmartThings Airconditioner |
+| `airConditioner` | Samsung SmartThings airconditioner |
 
 > Additional device types (dryer, dishwasher, etc.) can be added by contributing channel mappings.
 
@@ -430,6 +430,10 @@ Bridge smartthingscloud:account:myaccount "Samsung SmartThings" {
     Thing lightSensor mysensor "Bedroom Light Sensor" [
         deviceId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         pollingIntervalSeconds = 60
+    ]
+    Thing airConditioner myairconditioner "Airconditioner" [
+        deviceId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        pollingIntervalSeconds = 30
     ]
 }
 ```
