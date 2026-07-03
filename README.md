@@ -10,13 +10,14 @@ Any Samsung account holder can authorize using the built-in client ID without re
 
 | Thing type    | Description |
 |---------------|-------------|
-| `washer`      | Samsung washing machine |
-| `television`  | Samsung Smart TV |
-| `presence`    | Samsung mobile phone / SmartThings presence sensor |
-| `lightSensor` | SmartThings illuminance / brightness sensor |
-| `scene`       | SmartThings scene — execute with a Switch channel |
+| `washer`         | Samsung washing machine |
+| `television`     | Samsung Smart TV |
+| `presence`       | Samsung mobile phone / SmartThings presence sensor |
+| `lightSensor`    | Samsung SmartThings illuminance / brightness sensor |
+| `scene`          | Samsung SmartThings scene — execute with a switch channel |
+| `airConditioner` | Samsung SmartThings Airconditioner |
 
-> Additional device types (dryer, dishwasher, air purifier, etc.) can be added by contributing channel mappings.
+> Additional device types (dryer, dishwasher, etc.) can be added by contributing channel mappings.
 
 ---
 
@@ -176,6 +177,10 @@ Bridge smartthingscloud:account:myaccount "Samsung SmartThings" {
         deviceId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         pollingIntervalSeconds = 60
     ]
+   Thing airConditioner myairconditioner "Airconditioner" [
+        deviceId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        pollingIntervalSeconds = 60
+    ]
 }
 ```
 
@@ -237,6 +242,15 @@ Add a new thing of type **SmartThings Cloud Account** (bridge), then add child t
 |--------------|------|----------|----------|-------------|
 | `sceneId`    | text | **Yes**  | —        | SmartThings scene UUID. See [Finding Your Scene ID](#finding-your-scene-id). |
 | `locationId` | text | No       | *(empty)*| SmartThings location UUID. Required only if your account has multiple locations. |
+
+---
+
+## Airconditioner Configuration Parameters
+
+| Parameter    | Type | Required | Default  | Description |
+|--------------|------|----------|----------|-------------|
+| `deviceId`   | text | **Yes**  | —        | SmartThings device UUID.  |
+| `locationId` | text | No       | `30`     | Poll interval in seconds. |
 
 ---
 
@@ -364,6 +378,34 @@ Add a new thing of type **SmartThings Cloud Account** (bridge), then add child t
 | `trigger`  | Switch | Send `ON` to execute the scene. Automatically resets to `OFF` after triggering. |
 
 > **Note:** Because the channel auto-resets, you can link it to a `Switch` item and fire the scene any number of times — each `ON` command is a fresh execution.
+
+---
+
+## Airconditioner Channels
+
+### State channels (read-only)
+
+| Channel ID      | Type   | Source capability                        | Description |
+|-----------------|--------|------------------------------------------|-------------|
+| `power`                  | Switch                | `switch` → `on` / `off`             | Status of the air conditioner on or off |
+| `mode`                   | Switch                | `airConditionerMode`                | Operating mode: auto, cool, dry, fan, heat |
+| `targetTemperature`      | Number:Temperature    | `thermostatCoolingSetpoint`         | Set cooling setpoint temperature |
+| `currentTemperature`     | Number:Temperature    | `temperatureMeasurement`            | Measured room temperature |
+| `fanMode`                | String                | `airConditionerFanMode`             | Fan speed: auto, low, medium, high, turbo |
+| `fanOscillationMode`     | String                | `fanOscillationMode`                | Fan swing/oscillation direction: fixed, vertical, horizontal, all, fixedCenter, fixedLeft, fixedRight |
+| `optionalMode`           | String                | `custom.airConditionerOptionalMode` | Samsung-specific optional mode, e.g. windFree, sleep, speed |
+
+### Control channels (read/write)
+
+| Channel ID      | Type   | Write capability                        | Description |
+|-----------------|--------|------------------------------------------|-------------|
+| `power`                  | Switch                | `switch` → `on` / `off`             | Turn the air conditioner on or off |
+| `mode`                   | Switch                | `airConditionerMode`                | Set operating mode: auto, cool, dry, fan, heat |
+| `targetTemperature`      | Number:Temperature    | `thermostatCoolingSetpoint`         | Set cooling setpoint temperature |
+| `fanMode`                | String                | `airConditionerFanMode`             | Set fan speed: auto, low, medium, high, turbo |
+| `fanOscillationMode`     | String                | `fanOscillationMode`                | Set fan swing/oscillation direction: fixed, vertical, horizontal, all, fixedCenter, fixedLeft, fixedRight |
+| `optionalMode`           | String                | `custom.airConditionerOptionalMode` | Set Samsung-specific optional mode, e.g. windFree, sleep, speed |
+
 
 ---
 
@@ -625,13 +667,13 @@ cp target/org.openhab.binding.smartthingscloud-*.jar /usr/share/openhab/addons/
 - [x] `television` thing — Samsung Smart TV support (power, volume, mute, input, channel, picture mode, sound mode, app ID, channel up/down, supported inputs/picture modes/sound modes)
 - [x] `presence` thing — SmartThings phone/arrival sensor presence detection
 - [x] `lightSensor` thing — illuminance + brightness level channels
+- [x] `airConditioner` thing — Samsung Smartthings Airconditioner support
 
 ### Planned
 
 - [ ] Auto-discovery — list SmartThings devices and auto-create things
 - [ ] Dryer support
 - [ ] Dishwasher support
-- [ ] Air purifier support
 - [ ] SSE/webhook push events instead of polling
 - [ ] TV: channel list / app list enumeration
 - [ ] Presence: geofence zone support (multiple zones)
